@@ -7,8 +7,20 @@ const router = [
     children: [
       {
         path: '/',
-        name: 'Home',
-        component: ()=> import('@/views/Home.vue')
+        name: 'Admin',
+        component: ()=> import('@/views/Admin.vue'),
+        children: [
+          {
+            path: '/',
+            name: 'Home',
+            component: ()=>  import('@/views/Home.vue'),
+          },
+          {
+            path: 'Activity',
+            name: 'Activity',
+            component: ()=> import('@/views/Activity.vue'),
+          },
+        ]
       },
       {
         path: 'Login',

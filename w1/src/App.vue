@@ -16,6 +16,7 @@ export default {
   <div>
     <Loading v-show="isLoading" />
     <router-view class="main w-full" />
+    <div id="message-list" />
   </div>
 </template>
 
@@ -35,5 +36,19 @@ body {
 .main {
   width: 100%;
   min-height: 100vh;
+}
+#message-list{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+}
+#message-list:empty{
+  margin-top: 0;
 }
 </style>

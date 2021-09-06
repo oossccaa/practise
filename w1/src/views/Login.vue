@@ -10,15 +10,18 @@ div
     .control.flex.flex-col.items-center
       .button.text-blue-500.w-32.pb-12.cursor-pointer(@click="goRegister") 註冊
       .button.bg-blue-500.text-white.rounded-md.w-32.text-lg.p-1.cursor-pointer(@click="handleLogin") 登入
+  Verify(v-show="VerifyVisible")
 </template>
 
 <script>
-import { inject, reactive,toRefs } from 'vue'
+import { inject, reactive,toRefs,ref } from 'vue'
 import {login} from '@/apis/user'
 import {useRouter} from 'vue-router'
 import FormInput from '@/components/FormInput.vue'
+import Verify from '@/components/Verify.vue'
+import Alert from '@/components/Alert/Plugins.js'
 export default {
-  components: {FormInput},
+  components: {FormInput,Verify},
   setup() {
     const router = useRouter()
     const form = reactive({
@@ -30,6 +33,7 @@ export default {
       password: false
     }
     const isLoading = inject('isLoading')
+    const VerifyVisible = ref(false)
     const goRegister = ()=>{
       router.push('/Register')
     }
@@ -38,7 +42,8 @@ export default {
       const result = await login({account: 'tris',password:'123'})
       isLoading.value = false
     }
-    return { goRegister,handleLogin,...toRefs(form),formVerify }
+    Alert.error('錯誤')
+    return { goRegister,handleLogin,...toRefs(form),formVerify,VerifyVisible }
   },
 }
 </script>

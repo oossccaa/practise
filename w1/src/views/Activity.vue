@@ -1,6 +1,6 @@
 <template>
   <div>
-    我是首頁
+    我是最新消息
   </div>
 </template>
 
