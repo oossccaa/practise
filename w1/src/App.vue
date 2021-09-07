@@ -47,8 +47,13 @@ body {
   display: flex;
   flex-direction: column;
   margin-top: 16px;
+  text-align: center;
 }
 #message-list:empty{
   margin-top: 0;
+}
+.message-item{
+  display: flex;
+  justify-content: center;
 }
 </style>

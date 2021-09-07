@@ -4,7 +4,11 @@ div
     .title.pt-4 註冊
     .form 
       .form__input
-        FormInput(title='帳號', v-model='account', :verify='formVerify.account')
+        FormInput(
+          title='帳號',
+          v-model='username',
+          :verify='formVerify.username'
+        )
       .form__input.pt-8
         FormInput(
           title='密碼',
@@ -32,17 +36,18 @@ import { inject, ref, reactive, toRefs } from 'vue'
 import { register } from '@/apis/user'
 import { useRouter } from 'vue-router'
 import FormInput from '@/components/FormInput.vue'
+import Alert from '@/components/Alert/Plugins.js'
 export default {
   components: { FormInput },
   setup() {
     const router = useRouter()
     const form = reactive({
-      account: '',
+      username: '',
       password: '',
       confirm: '',
     })
     const formVerify = reactive({
-      account: false,
+      username: false,
       password: false,
       confirm: false,
     })
@@ -51,18 +56,25 @@ export default {
       router.push('/Login')
     }
     const verifyRegister = () => {
-      formVerify.account = false
+      formVerify.username = false
       formVerify.password = false
       formVerify.confirm = false
-      const { account, password, confirm } = form
-      if (!account) {
-        formVerify.account = '請輸入帳號'
+      const { username, password, confirm } = form
+      if (!username) {
+        formVerify.username = '請輸入帳號'
+      } else if (!/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(username)) {
+        formVerify.username = '帳號必須是信箱'
       }
       if (!password) {
         formVerify.password = '請輸入密碼'
+      } else if (!/^[A-z]\d{2,6}[A-z]$/.test(password)) {
+        formVerify.password = '密碼格式錯誤'
       }
+
       if (!confirm) {
         formVerify.confirm = '請輸入確認密碼'
+      } else if (!/^[A-z]\d{2,6}[A-z]$/.test(confirm)) {
+        formVerify.confirm = '密碼格式錯誤'
       }
       if (String(password) != String(confirm)) {
         formVerify.confirm = '與密碼不同'
@@ -73,12 +85,20 @@ export default {
       if (!verifyRegister()) {
         return false
       }
-      isLoading.value = true
-      const result = await register({ account: 'tris', password: '123' })
-      if (result) {
-        //登入成功!
+      try {
+        isLoading.value = true
+        const result = await register({
+          username: form.username,
+          password: form.password,
+        })
+        if (result.status === 200) {
+          Alert.success(result.data.message)
+          router.push('/Login')
+        }
+        isLoading.value = false
+      } catch (error) {
+        isLoading.value = false
       }
-      isLoading.value = false
     }
     return { goLogin, handleRegister, ...toRefs(form), formVerify }
   },

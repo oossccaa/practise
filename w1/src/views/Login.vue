@@ -4,46 +4,77 @@ div
     .title.pt-4 登入
     .form 
       .form__input
-        FormInput(title="帳號" v-model="account" :verify="formVerify.account")
+        FormInput(
+          title='帳號',
+          v-model='username',
+          :verify='formVerify.username'
+        )
       .form__input.pt-8
-        FormInput(title="密碼" v-model="password" :verify="formVerify.password" hide)
+        FormInput(
+          title='密碼',
+          v-model='password',
+          :verify='formVerify.password',
+          hide
+        )
     .control.flex.flex-col.items-center
-      .button.text-blue-500.w-32.pb-12.cursor-pointer(@click="goRegister") 註冊
-      .button.bg-blue-500.text-white.rounded-md.w-32.text-lg.p-1.cursor-pointer(@click="handleLogin") 登入
-  Verify(v-show="VerifyVisible")
+      .button.text-blue-500.w-32.pb-12.cursor-pointer(@click='goRegister') 註冊
+      .button.bg-blue-500.text-white.rounded-md.w-32.text-lg.p-1.cursor-pointer(
+        @click='handleLogin'
+      ) 登入
+  Verify(v-show='VerifyVisible')
 </template>
 
 <script>
-import { inject, reactive,toRefs,ref } from 'vue'
-import {login} from '@/apis/user'
-import {useRouter} from 'vue-router'
+import { inject, reactive, toRefs, ref } from 'vue'
+import { login } from '@/apis/user'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import FormInput from '@/components/FormInput.vue'
 import Verify from '@/components/Verify.vue'
 import Alert from '@/components/Alert/Plugins.js'
 export default {
-  components: {FormInput,Verify},
+  components: { FormInput, Verify },
   setup() {
     const router = useRouter()
+    const store = useStore()
     const form = reactive({
-      account: '',
+      username: '',
       password: '',
     })
     const formVerify = {
-      account: false,
-      password: false
+      username: false,
+      password: false,
     }
     const isLoading = inject('isLoading')
     const VerifyVisible = ref(false)
-    const goRegister = ()=>{
+    const goRegister = () => {
       router.push('/Register')
     }
-    const handleLogin = async()=>{
-      isLoading.value = true
-      const result = await login({account: 'tris',password:'123'})
-      isLoading.value = false
+    const handleLogin = async () => {
+      try {
+        isLoading.value = true
+        const result = await login({
+          username: form.username,
+          password: form.password,
+        })
+        if (result.status === 200) {
+          Alert.success('登入成功!')
+          const {token} = result.data
+          store.commit('SET_TOKEN',token)
+          setTimeout(()=>router.push('/'),0)
+        }
+        isLoading.value = false
+      } catch (error) {
+        isLoading.value = false
+      }
     }
-    Alert.error('錯誤')
-    return { goRegister,handleLogin,...toRefs(form),formVerify,VerifyVisible }
+    return {
+      goRegister,
+      handleLogin,
+      ...toRefs(form),
+      formVerify,
+      VerifyVisible,
+    }
   },
 }
 </script>
