@@ -21,8 +21,8 @@ import Alert from '@/components/Alert/Plugins.js'
       const router = useRouter()
       onMounted(async ()=>{
         if(!store.state.token){
-          Alert.error('您尚無權限可進入,請重新登入!')
           router.push('/Login')
+          return 
         }
         try {
           const result = await authentication()

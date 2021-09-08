@@ -68,8 +68,11 @@ export default {
         isLoading.value = false
       }
     }
+    const handleVerify = ()=>{
+      VerifyVisible.value = true
+    }
     return {
-      goRegister,
+      goRegister,handleVerify,
       handleLogin,
       ...toRefs(form),
       formVerify,

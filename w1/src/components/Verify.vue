@@ -14,7 +14,8 @@
 import { computed, ref } from '@vue/reactivity'
 import { onDeactivated, onMounted } from '@vue/runtime-core'
 export default {
-  setup() {
+  emits: [""],
+  setup(props,{emit}) {
     const card = ref(null)
     const circle = ref(null)
     const hover = ref(null)
@@ -28,6 +29,7 @@ export default {
       })
       card.value.addEventListener('mouseup', (e) => {
         isDrop.value = false
+        handleMouseUp()
       })
       card.value.addEventListener('mousemove', (e) => {
         if (isDrop.value) {
@@ -35,6 +37,9 @@ export default {
         }
       })
     })
+    const handleMouseUp = ()=>{
+      
+    }
     const moveStyle = computed(()=>{
       return {
         transform: `translateX(${xMove.value}px)`
